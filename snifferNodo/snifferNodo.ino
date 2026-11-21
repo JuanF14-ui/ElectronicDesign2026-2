@@ -3,11 +3,11 @@
 #include "esp_wifi.h"
 
 // CAMBIA ESTO EN CADA PLACA: "NODO_1" en la primera, "NODO_2" en la segunda
-const char* NOMBRE_NODO = "NODO_2"; 
+const char* NOMBRE_NODO = "NODO_1"; 
 
 const char* ssid = "LuanFRed";
 const char* password = "123456789"; // Pon la clave de tu hotspot
-const char* ipRaspberry = "10.171.170.198"; // Verifica que siga siendo la IP de tu Pi
+const char* ipRaspberry = "192.168.43.198 "; // Verifica que siga siendo la IP de tu Pi
 const int puertoUDP = 5005;
 
 WiFiUDP udp;
