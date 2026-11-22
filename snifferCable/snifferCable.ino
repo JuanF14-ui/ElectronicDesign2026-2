@@ -12,17 +12,20 @@ QueueHandle_t colaPaquetes;
 int canalActual = 1;
 unsigned long ultimoCambioCanal = 0;
 
-void IRAM_ATTR snifferCallback(void* buf, wifi_promiscuous_pkt_type_t type) {
+// Corre en la tarea de Wi-Fi (no es una interrupción): se usa xQueueSend
+void snifferCallback(void* buf, wifi_promiscuous_pkt_type_t type) {
   if (type == WIFI_PKT_CTRL) return; // Ignorar tramas de control sin MAC origen
 
   wifi_promiscuous_pkt_t* pkt = (wifi_promiscuous_pkt_t*)buf;
+  if (!pkt || pkt->rx_ctrl.sig_len < 24) return; // Cabecera 802.11 incompleta
+  if (type == WIFI_PKT_DATA && (pkt->payload[1] & 0x02)) return; // FromDS: la transmite un router
   Paquete p;
   memcpy(p.mac, pkt->payload + 10, 6); // Dirección MAC del transmisor
   p.tipo = type;
   p.subtipo = pkt->payload[0];
   p.rssi = pkt->rx_ctrl.rssi;
 
-  xQueueSendFromISR(colaPaquetes, &p, NULL);
+  xQueueSend(colaPaquetes, &p, 0);
 }
 
 void setup() {
