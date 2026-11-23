@@ -1,57 +1,71 @@
-# CROWDIA · proyectoDiseno2026-2
+# CROWDIA
 
-Sistema para apoyar la búsqueda de personas tras un sismo: detecta el sismo con una IMU
-y cuenta los celulares cercanos con sniffers Wi-Fi, sin internet y con baterías.
+**Sistema para apoyar la búsqueda de personas atrapadas después de un terremoto.**
 
-![Diagrama de bloques](docs/CROWDIA_diagrama_de_bloques.png)
+Un nodo instalado en una zona de riesgo cuenta los celulares cercanos escuchando sus señales Wi-Fi y,
+con un acelerómetro y un agente de IA, detecta si ocurre un sismo. Al confirmarlo, envía lo captado a
+un nodo en un lugar seguro, para que los rescatistas sepan cuántas personas podría haber y dónde
+buscar. Todo funciona **sin internet** y **con baterías**.
 
-## Estructura
+Proyecto del curso *Diseño de Sistemas Electrónicos* · Universidad Nacional de Colombia, sede Bogotá · 2026-II.
 
-| Carpeta / archivo | Qué contiene |
+![Diagrama de bloques](docs/img/CROWDIA_diagrama_de_bloques.png)
+
+## Estado actual (22 de noviembre de 2026)
+
+| Parte | Estado |
 |---|---|
-| `sniffer/` | ESP32 conectado a una red, captura en modo promiscuo y envía por UDP a la Raspberry Pi |
-| `snifferNodo/` | Igual que `sniffer/`, para varios nodos (`NODO_1`, `NODO_2`, ...) |
-| `snifferCable/` | ESP32 sin conectarse a ninguna red: salta por los canales 1–13 y envía por USB serie |
-| `crowdia/crowdia_integrado.py` | **Programa principal** en la Raspberry Pi: sismómetro + conteo de dispositivos + buzzer + CSV |
-| `crowdia/ver_macs.py` | Diagnóstico: lista las MAC que envía el ESP32 durante 60 s |
-| `sismo/crowdia_sismo4.py` | Detector sísmico solo (versión anterior al integrado) |
-| `sismo/mpu_test.py` | Prueba básica de lectura de la MPU6050 |
-| `pruebaLCD.py` | Prueba de la LCD 16×2 (HD44780) |
-| `simulaciones/` | Simulaciones LTspice |
-| `docs/` | Diagrama de bloques (PNG y SVG) |
-| `docs/bitacora/` | Bitácora de trabajo por fecha, con pruebas y resultados |
-| `datos/` | Datos de las pruebas (MAC guardadas como hash) |
+| Sniffer Wi-Fi en ESP32 → Raspberry Pi por UDP | ✅ Funcionando |
+| Sismómetro con MPU6050 (detección por reglas, sin falsas alarmas con golpes aislados) | ✅ Funcionando |
+| Conteo de dispositivos con agrupación de MAC aleatorias | ✅ Funcionando (error de +0 a +2 equipos) |
+| Buzzer (alarma de sismo y aviso de celular nuevo) | ✅ Funcionando |
+| Registro de datos en CSV (MAC hasheadas) | ✅ Funcionando |
+| Agente IA 1 (modelo sismo / no sismo) | 🔨 Siguiente paso |
+| Agente IA 2 (huella de Information Elements) | ⏳ Pendiente |
+| Enlace ESP-NOW y nodo gateway | ⏳ Pendiente |
+| Baterías y etapa de potencia | ⏳ Pendiente |
 
-## Credenciales (antes de compilar los sketches)
+## Documentación
 
-Las claves Wi-Fi **no** se suben al repositorio. En `sniffer/` y `snifferNodo/`:
+Para entender el proyecto, leer en este orden:
 
-1. Copia `secretos_ejemplo.h` como `secretos.h` en la misma carpeta.
-2. Pon el nombre de la red, la clave y la IP de la Raspberry Pi (`hostname -I` en la Pi).
-3. `secretos.h` está en `.gitignore`, así que no se sube.
+| Documento | Contenido |
+|---|---|
+| [1. Visión general](docs/01_vision_general.md) | Qué es, requisitos del curso, arquitectura actual y planeada, historia de las decisiones |
+| [2. Hardware y conexiones](docs/02_hardware_y_conexiones.md) | Componentes, pines, red y lecciones aprendidas |
+| [3. Los códigos](docs/03_codigos.md) | **Qué hace cada programa y cómo funciona por dentro**, con su historial de versiones |
+| [4. Pruebas y resultados](docs/04_pruebas_y_resultados.md) | **Todas las pruebas**, con datos, conclusiones y lo que se cambió después de cada una |
+| [5. Guía de uso](docs/05_guia_de_uso.md) | Paso a paso para montar, correr y sacar los datos; problemas frecuentes |
+| [6. Agentes de IA y próximos pasos](docs/06_proximos_pasos.md) | Plan del Agente IA 1, papel de PicoClaw y pendientes |
+| [Bitácora](docs/bitacora/) | Registro por fecha |
 
-## Filtros de los sniffers
-
-Para no contar equipos que no son celulares, los sketches descartan:
-
-- Tramas de control (no traen la MAC de origen).
-- Beacons (`0x80`) y probe responses (`0x50`): los envían los routers.
-- Tramas de datos con la bandera FromDS: las transmite el router, no el celular.
-- La MAC de la propia placa y las del sistema (`MACS_SISTEMA` en `secretos.h`).
-
-## Pines de la Raspberry Pi Zero 2 W
-
-| Elemento | GPIO (BCM) | Pin físico |
-|---|---|---|
-| MPU6050 SDA (I2C por software, bus 3) | 23 | 16 |
-| MPU6050 SCL (I2C por software, bus 3) | 24 | 18 |
-| MPU6050 VCC / GND / AD0 | 3,3 V / GND / GND | 1 / 6 / 14 |
-| LCD RS / E | 15 / 10 | 10 / 19 |
-| LCD D4 / D5 / D6 / D7 | 11 / 19 / 6 / 26 | 23 / 35 / 31 / 37 |
-| Buzzer (base del transistor) | 17 (confirmar) | 11 |
-
-El bus 3 se crea con esta línea en `/boot/firmware/config.txt`:
+## Estructura del repositorio
 
 ```
-dtoverlay=i2c-gpio,bus=3,i2c_gpio_sda=23,i2c_gpio_scl=24
+esp32/
+  snifferNodo/        Sniffer que usa el sistema: envía NODO,MAC,TIPO,RSSI por UDP  ← en uso
+  sniffer/            Versión anterior (3 campos)
+  snifferCable/       Alternativa: salta de canal y envía por USB
+raspberry/
+  crowdia_integrado.py   Programa principal: sismómetro + dispositivos + buzzer + CSV  ← en uso
+  ver_macs.py            Diagnóstico de las MAC que llegan del ESP32
+  pruebas/               Pruebas de la IMU (mpu_test.py) y de la LCD (pruebaLCD.py)
+  historial/             Versiones anteriores, para ver cómo evolucionó el código
+datos/
+  2026-11-22/            Datos de las pruebas del 22/11
+  ejemplos/              Ejemplo de salida de un sniffer
+docs/                    Documentación (ver tabla de arriba) e imágenes
+simulaciones/            Simulaciones LTspice
 ```
+
+## Inicio rápido
+
+1. **ESP32:** abrir `esp32/snifferNodo/snifferNodo.ino`, copiar `secretos_ejemplo.h` como
+   `secretos.h` con la red, la clave y la IP de la Pi, y subirlo como **ESP32 Dev Module**.
+2. **Raspberry Pi:** conectar la MPU6050 a los pines 16 y 18 (bus I2C 3) y ejecutar
+   `python3 ~/crowdia/crowdia_integrado.py`.
+
+Detalles en la [guía de uso](docs/05_guia_de_uso.md).
+
+> **Credenciales:** las claves Wi-Fi van en `secretos.h`, que no se sube al repositorio
+> (está en `.gitignore`). Nunca escribir claves directamente en el código.
