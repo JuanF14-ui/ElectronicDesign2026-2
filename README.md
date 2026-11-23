@@ -11,7 +11,7 @@ Proyecto del curso *Diseño de Sistemas Electrónicos* · Universidad Nacional d
 
 ![Diagrama de bloques](docs/img/CROWDIA_diagrama_de_bloques.png)
 
-## Estado actual (22 de noviembre de 2026)
+## Estado actual (23 de noviembre de 2026)
 
 | Parte | Estado |
 |---|---|
@@ -20,7 +20,7 @@ Proyecto del curso *Diseño de Sistemas Electrónicos* · Universidad Nacional d
 | Conteo de dispositivos con agrupación de MAC aleatorias | ✅ Funcionando (error de +0 a +2 equipos) |
 | Buzzer (alarma de sismo y aviso de celular nuevo) | ✅ Funcionando |
 | Registro de datos en CSV (MAC hasheadas) | ✅ Funcionando |
-| Agente IA 1 (modelo sismo / no sismo) | 🔨 Siguiente paso |
+| Agente IA 1 (modelo sismo / no sismo) | 🔨 Recolectando datos: 15 sacudidas y 20 golpes grabados |
 | Agente IA 2 (huella de Information Elements) | ⏳ Pendiente |
 | Enlace ESP-NOW y nodo gateway | ⏳ Pendiente |
 | Baterías y etapa de potencia | ⏳ Pendiente |
@@ -49,10 +49,12 @@ esp32/
 raspberry/
   crowdia_integrado.py   Programa principal: sismómetro + dispositivos + buzzer + CSV  ← en uso
   ver_macs.py            Diagnóstico de las MAC que llegan del ESP32
+  etiquetar.py           Poner o corregir la etiqueta de los eventos grabados
   pruebas/               Pruebas de la IMU (mpu_test.py) y de la LCD (pruebaLCD.py)
   historial/             Versiones anteriores, para ver cómo evolucionó el código
 datos/
   2026-11-22/            Datos de las pruebas del 22/11
+  recoleccion_faseA_2026-11-22/  Eventos grabados y etiquetados para entrenar el Agente IA 1
   ejemplos/              Ejemplo de salida de un sniffer
 docs/                    Documentación (ver tabla de arriba) e imágenes
 simulaciones/            Simulaciones LTspice
