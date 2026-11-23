@@ -1,0 +1,5 @@
+fecha,tipo,duracion_s,sobre_umbral_s,fraccion,pico_mg,intensidad,alerta
+2026-11-22 16:23:00,sostenido,6.56,4.18,0.64,1230.3,IX+,True
+2026-11-22 16:27:35,golpe/impulso,3.24,0.14,0.04,80.1,V,False
+2026-11-22 16:33:25,golpe/impulso,1.48,0.0,0.0,21.3,IV,False
+2026-11-22 16:33:41,sostenido,8.4,6.22,0.73,750.4,IX+,True

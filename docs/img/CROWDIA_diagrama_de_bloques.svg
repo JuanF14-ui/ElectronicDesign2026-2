@@ -1,0 +1,206 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1880" height="1100" viewBox="0 0 1880 1100">
+<defs>
+<marker id="e-data" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="12" refX="12" refY="6" orient="auto"><path d="M0,0.5 L13,6 L0,11.5 Z" fill="#334155"/></marker>
+<marker id="s-data" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="12" refX="1" refY="6" orient="auto"><path d="M13,0.5 L0,6 L13,11.5 Z" fill="#334155"/></marker>
+<marker id="e-pwr" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="12" refX="12" refY="6" orient="auto"><path d="M0,0.5 L13,6 L0,11.5 Z" fill="#DC2626"/></marker>
+<marker id="s-pwr" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="12" refX="1" refY="6" orient="auto"><path d="M13,0.5 L0,6 L13,11.5 Z" fill="#DC2626"/></marker>
+<marker id="e-rf" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="12" refX="12" refY="6" orient="auto"><path d="M0,0.5 L13,6 L0,11.5 Z" fill="#1D4ED8"/></marker>
+<marker id="s-rf" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="12" refX="1" refY="6" orient="auto"><path d="M13,0.5 L0,6 L13,11.5 Z" fill="#1D4ED8"/></marker>
+</defs>
+<rect width="1880" height="1100" fill="#F3F5F9"/>
+<text x="40" y="56" font-family="Inter" font-size="32" font-weight="800" fill="#10243E" text-anchor="start" letter-spacing="1">CROWDIA</text>
+<text x="224.375" y="56" font-family="Inter" font-size="20" font-weight="500" fill="#56657A" text-anchor="start">Diagrama de bloques del sistema</text>
+<text x="40" y="82" font-family="Inter" font-size="14" font-weight="400" fill="#56657A" text-anchor="start">Detección sísmica, conteo y ubicación aproximada de dispositivos cercanos · operación local, sin internet y con baterías</text>
+<rect x="330" y="100" width="630" height="200" rx="18" fill="#FFFFFF" stroke="#C3CCD9" stroke-width="1.6"/>
+<text x="354" y="132" font-family="Inter" font-size="13" font-weight="700" fill="#10243E" text-anchor="start" letter-spacing="1.6">NODOS SATÉLITE · TRILATERACIÓN</text>
+<text x="354" y="151" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="start">3 × ESP32 con batería, en posiciones conocidas alrededor de la zona</text>
+<path d="M432,180 L462,180 L447,205 Z" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M447,180 L447,220" fill="none" stroke="#1D4ED8" stroke-width="2.4" stroke-linecap="round"/>
+<text x="468" y="195" font-family="DejaVu Sans Mono" font-size="11.5" font-weight="700" fill="#1D4ED8" text-anchor="start">RX · TX</text>
+<rect x="357" y="220" width="180" height="64" rx="10" fill="#FFFFFF" stroke="#10243E" stroke-width="1.8"/>
+<path d="M367,221 H364 V283 H367 A9,9 0 0 1 358,274 V230 A9,9 0 0 1 367,221 Z" fill="#10243E"/>
+<text x="451.0" y="247.0" font-family="Inter" font-size="16" font-weight="600" fill="#0F172A" text-anchor="middle">Satélite A</text>
+<text x="451.0" y="267.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="middle">ESP32 · mide RSSI</text>
+<path d="M630,180 L660,180 L645,205 Z" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M645,180 L645,220" fill="none" stroke="#1D4ED8" stroke-width="2.4" stroke-linecap="round"/>
+<text x="666" y="195" font-family="DejaVu Sans Mono" font-size="11.5" font-weight="700" fill="#1D4ED8" text-anchor="start">RX · TX</text>
+<rect x="555" y="220" width="180" height="64" rx="10" fill="#FFFFFF" stroke="#10243E" stroke-width="1.8"/>
+<path d="M565,221 H562 V283 H565 A9,9 0 0 1 556,274 V230 A9,9 0 0 1 565,221 Z" fill="#10243E"/>
+<text x="649.0" y="247.0" font-family="Inter" font-size="16" font-weight="600" fill="#0F172A" text-anchor="middle">Satélite B</text>
+<text x="649.0" y="267.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="middle">ESP32 · mide RSSI</text>
+<path d="M828,180 L858,180 L843,205 Z" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M843,180 L843,220" fill="none" stroke="#1D4ED8" stroke-width="2.4" stroke-linecap="round"/>
+<text x="864" y="195" font-family="DejaVu Sans Mono" font-size="11.5" font-weight="700" fill="#1D4ED8" text-anchor="start">RX · TX</text>
+<rect x="753" y="220" width="180" height="64" rx="10" fill="#FFFFFF" stroke="#10243E" stroke-width="1.8"/>
+<path d="M763,221 H760 V283 H763 A9,9 0 0 1 754,274 V230 A9,9 0 0 1 763,221 Z" fill="#10243E"/>
+<text x="847.0" y="247.0" font-family="Inter" font-size="16" font-weight="600" fill="#0F172A" text-anchor="middle">Satélite C</text>
+<text x="847.0" y="267.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="middle">ESP32 · mide RSSI</text>
+<path d="M520,301 L520,339" fill="none" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" marker-end="url(#e-rf)"/>
+<rect x="458.4" y="302" width="123.1" height="22" rx="11" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="1.4"/>
+<text x="520" y="317.2" font-family="DejaVu Sans Mono" font-size="12" font-weight="700" fill="#1D4ED8" text-anchor="middle">ESP-NOW · RSSI</text>
+<rect x="60" y="385" width="190" height="64" rx="10" fill="#FFFFFF" stroke="#475569" stroke-width="1.8"/>
+<path d="M70,386 H67 V448 H70 A9,9 0 0 1 61,439 V395 A9,9 0 0 1 70,386 Z" fill="#475569"/>
+<text x="159.0" y="412.0" font-family="Inter" font-size="16" font-weight="600" fill="#0F172A" text-anchor="middle">Celulares cercanos</text>
+<text x="159.0" y="432.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="middle">Wi-Fi y BLE activos</text>
+<path d="M250,417 L285,417" fill="none" stroke="#1D4ED8" stroke-width="2.4" stroke-linecap="round"/>
+<path d="M270,340 L300,340 L285,365 Z" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M285,340 L285,417" fill="none" stroke="#1D4ED8" stroke-width="2.4" stroke-linecap="round"/>
+<text x="297" y="392" font-family="DejaVu Sans Mono" font-size="11.5" font-weight="700" fill="#1D4ED8" text-anchor="start">TX</text>
+<path d="M285,339 L285,252 L329,252" fill="none" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" marker-end="url(#e-rf)"/>
+<path d="M306,352 L499,352" fill="none" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" marker-end="url(#e-rf)"/>
+<text x="410" y="378" font-family="Inter" font-size="12.5" font-weight="600" fill="#1D4ED8" text-anchor="middle">Probe requests Wi-Fi</text>
+<text x="410" y="396" font-family="Inter" font-size="12.5" font-weight="600" fill="#1D4ED8" text-anchor="middle">Anuncios BLE · 2,4 GHz</text>
+<path d="M505,340 L535,340 L520,365 Z" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M520,340 L520,540" fill="none" stroke="#1D4ED8" stroke-width="2.4" stroke-linecap="round"/>
+<text x="532" y="392" font-family="DejaVu Sans Mono" font-size="11.5" font-weight="700" fill="#1D4ED8" text-anchor="start">RX · TX</text>
+<path d="M1165,340 L1195,340 L1180,365 Z" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M1180,340 L1180,540" fill="none" stroke="#1D4ED8" stroke-width="2.4" stroke-linecap="round"/>
+<text x="1192" y="392" font-family="DejaVu Sans Mono" font-size="11.5" font-weight="700" fill="#1D4ED8" text-anchor="start">RX · TX</text>
+<path d="M1395,340 L1425,340 L1410,365 Z" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="2.4" stroke-linejoin="round"/>
+<path d="M1410,340 L1410,540" fill="none" stroke="#1D4ED8" stroke-width="2.4" stroke-linecap="round"/>
+<text x="1422" y="392" font-family="DejaVu Sans Mono" font-size="11.5" font-weight="700" fill="#1D4ED8" text-anchor="start">RX</text>
+<path d="M541,352 L1159,352" fill="none" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" marker-end="url(#e-rf)"/>
+<rect x="777.6" y="341" width="144.8" height="22" rx="11" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="1.4"/>
+<text x="850" y="356.2" font-family="DejaVu Sans Mono" font-size="12" font-weight="700" fill="#1D4ED8" text-anchor="middle">ESP-NOW · 2,4 GHz</text>
+<text x="850" y="388" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="middle">Conteo · huellas (hash) · RSSI · posición · hora</text>
+<path d="M1201,352 L1389,352" fill="none" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" marker-end="url(#e-rf)"/>
+<rect x="1258.7" y="341" width="72.6" height="22" rx="11" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="1.4"/>
+<text x="1295" y="356.2" font-family="DejaVu Sans Mono" font-size="12" font-weight="700" fill="#1D4ED8" text-anchor="middle">ESP-NOW</text>
+<rect x="40" y="480" width="920" height="520" rx="18" fill="#FFFFFF" stroke="#C3CCD9" stroke-width="1.6"/>
+<text x="64" y="512" font-family="Inter" font-size="13" font-weight="700" fill="#10243E" text-anchor="start" letter-spacing="1.6">NODO SNIFFER</text>
+<text x="64" y="531" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="start">Zona de riesgo · nodo central</text>
+<rect x="390" y="540" width="260" height="305" rx="12" fill="#10243E"/>
+<text x="520.0" y="569" font-family="Inter" font-size="16.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">Raspberry Pi Zero 2 W</text>
+<text x="520.0" y="589" font-family="Inter" font-size="12.5" font-weight="400" fill="#A9BBD0" text-anchor="middle">Linux · 512 MB · radio 2,4 GHz</text>
+<rect x="406" y="607" width="228" height="64" rx="8" fill="#1E3A5F" stroke="#3F5F87" stroke-width="1.2"/>
+<text x="520.0" y="634.0" font-family="Inter" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">Captura pasiva</text>
+<text x="520.0" y="654.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#B8C7D9" text-anchor="middle">Probe requests y BLE</text>
+<rect x="406" y="685" width="228" height="64" rx="8" fill="#6D28D9" stroke="#8B5CF6" stroke-width="1.2"/>
+<text x="520.0" y="712.0" font-family="Inter" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">Agente IA 1</text>
+<text x="520.0" y="732.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#E3D7FB" text-anchor="middle">Clasificador sísmico</text>
+<rect x="406" y="763" width="228" height="64" rx="8" fill="#6D28D9" stroke="#8B5CF6" stroke-width="1.2"/>
+<text x="520.0" y="790.0" font-family="Inter" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">Agente IA 2</text>
+<text x="520.0" y="810.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#E3D7FB" text-anchor="middle">Deduplicación y trilateración</text>
+<rect x="70" y="685" width="190" height="64" rx="10" fill="#FFFFFF" stroke="#EA580C" stroke-width="1.8"/>
+<path d="M80,686 H77 V748 H80 A9,9 0 0 1 71,739 V695 A9,9 0 0 1 80,686 Z" fill="#EA580C"/>
+<text x="169.0" y="712.0" font-family="Inter" font-size="16" font-weight="600" fill="#0F172A" text-anchor="middle">IMU MPU6050</text>
+<text x="169.0" y="732.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="middle">Acelerómetro y giroscopio</text>
+<rect x="70" y="763" width="190" height="64" rx="10" fill="#FFFFFF" stroke="#EA580C" stroke-width="1.8" stroke-dasharray="7 5"/>
+<path d="M80,764 H77 V826 H80 A9,9 0 0 1 71,817 V773 A9,9 0 0 1 80,764 Z" fill="#EA580C"/>
+<text x="169.0" y="790.0" font-family="Inter" font-size="16" font-weight="600" fill="#0F172A" text-anchor="middle">Reloj RTC</text>
+<text x="169.0" y="810.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="middle">Hora real sin internet</text>
+<path d="M260,717 L389,717" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#e-data)"/>
+<rect x="281.5" y="706" width="87.0" height="22" rx="11" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<text x="325" y="721.2" font-family="DejaVu Sans Mono" font-size="12" font-weight="700" fill="#334155" text-anchor="middle">I2C + INT</text>
+<path d="M260,795 L389,795" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#e-data)"/>
+<rect x="303.2" y="784" width="43.7" height="22" rx="11" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<text x="325" y="799.2" font-family="DejaVu Sans Mono" font-size="12" font-weight="700" fill="#334155" text-anchor="middle">I2C</text>
+<rect x="770" y="607" width="160" height="64" rx="10" fill="#FFFFFF" stroke="#0E7490" stroke-width="1.8"/>
+<path d="M780,608 H777 V670 H780 A9,9 0 0 1 771,661 V617 A9,9 0 0 1 780,608 Z" fill="#0E7490"/>
+<text x="854.0" y="634.0" font-family="Inter" font-size="16" font-weight="600" fill="#0F172A" text-anchor="middle">LCD 16×2</text>
+<text x="854.0" y="654.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="middle">HD44780 · estado</text>
+<rect x="770" y="685" width="160" height="64" rx="10" fill="#FFFFFF" stroke="#0E7490" stroke-width="1.8" stroke-dasharray="7 5"/>
+<path d="M780,686 H777 V748 H780 A9,9 0 0 1 771,739 V695 A9,9 0 0 1 780,686 Z" fill="#0E7490"/>
+<text x="854.0" y="712.0" font-family="Inter" font-size="16" font-weight="600" fill="#0F172A" text-anchor="middle">MicroSD local</text>
+<text x="854.0" y="732.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="middle">Respaldo de datos</text>
+<rect x="770" y="763" width="160" height="64" rx="10" fill="#FFFFFF" stroke="#0E7490" stroke-width="1.8"/>
+<path d="M780,764 H777 V826 H780 A9,9 0 0 1 771,817 V773 A9,9 0 0 1 780,764 Z" fill="#0E7490"/>
+<text x="854.0" y="790.0" font-family="Inter" font-size="16" font-weight="600" fill="#0F172A" text-anchor="middle">Amplificador</text>
+<text x="854.0" y="810.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="middle">Entrada digital I2S</text>
+<rect x="770" y="910" width="160" height="64" rx="10" fill="#FFFFFF" stroke="#0E7490" stroke-width="1.8"/>
+<path d="M780,911 H777 V973 H780 A9,9 0 0 1 771,964 V920 A9,9 0 0 1 780,911 Z" fill="#0E7490"/>
+<text x="854.0" y="937.0" font-family="Inter" font-size="16" font-weight="600" fill="#0F172A" text-anchor="middle">Parlante</text>
+<text x="854.0" y="957.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="middle">Alerta sonora</text>
+<path d="M651,639 L769,639" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#e-data)"/>
+<rect x="677.3" y="628" width="65.3" height="22" rx="11" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<text x="710" y="643.2" font-family="DejaVu Sans Mono" font-size="12" font-weight="700" fill="#334155" text-anchor="middle">4 bits</text>
+<path d="M652,717 L768,717" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" marker-start="url(#s-data)" marker-end="url(#e-data)"/>
+<rect x="691.8" y="706" width="36.4" height="22" rx="11" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<text x="710" y="721.2" font-family="DejaVu Sans Mono" font-size="12" font-weight="700" fill="#334155" text-anchor="middle">SD</text>
+<path d="M651,795 L769,795" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#e-data)"/>
+<rect x="688.2" y="784" width="43.7" height="22" rx="11" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<text x="710" y="799.2" font-family="DejaVu Sans Mono" font-size="12" font-weight="700" fill="#334155" text-anchor="middle">I2S</text>
+<path d="M850,827 L850,909" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#e-data)"/>
+<rect x="820.9" y="856" width="58.1" height="22" rx="11" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<text x="850" y="871.2" font-family="DejaVu Sans Mono" font-size="12" font-weight="700" fill="#334155" text-anchor="middle">Audio</text>
+<rect x="215" y="910" width="180" height="64" rx="10" fill="#FFFFFF" stroke="#DC2626" stroke-width="1.8"/>
+<path d="M225,911 H222 V973 H225 A9,9 0 0 1 216,964 V920 A9,9 0 0 1 225,911 Z" fill="#DC2626"/>
+<text x="309.0" y="937.0" font-family="Inter" font-size="16" font-weight="600" fill="#0F172A" text-anchor="middle">Batería</text>
+<text x="309.0" y="957.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="middle">Con BMS y carga</text>
+<rect x="440" y="910" width="160" height="64" rx="10" fill="#FFFFFF" stroke="#DC2626" stroke-width="1.8"/>
+<path d="M450,911 H447 V973 H450 A9,9 0 0 1 441,964 V920 A9,9 0 0 1 450,911 Z" fill="#DC2626"/>
+<text x="524.0" y="937.0" font-family="Inter" font-size="16" font-weight="600" fill="#0F172A" text-anchor="middle">Regulador 5 V</text>
+<text x="524.0" y="957.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="middle">Conversor DC-DC</text>
+<path d="M395,942 L439,942" fill="none" stroke="#DC2626" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#e-pwr)"/>
+<path d="M520,910 L520,846" fill="none" stroke="#DC2626" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#e-pwr)"/>
+<rect x="498.2" y="870" width="43.7" height="22" rx="11" fill="#FFFFFF" stroke="#DC2626" stroke-width="1.4"/>
+<text x="520" y="885.2" font-family="DejaVu Sans Mono" font-size="12" font-weight="700" fill="#DC2626" text-anchor="middle">5 V</text>
+<rect x="1000" y="480" width="220" height="270" rx="18" fill="#FFFFFF" stroke="#C3CCD9" stroke-width="1.6"/>
+<text x="1024" y="512" font-family="Inter" font-size="13" font-weight="700" fill="#10243E" text-anchor="start" letter-spacing="1.6">REPETIDOR</text>
+<text x="1024" y="531" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="start">Extiende el alcance</text>
+<rect x="1020" y="540" width="180" height="70" rx="12" fill="#10243E"/>
+<text x="1110.0" y="569" font-family="Inter" font-size="16.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">ESP32</text>
+<text x="1110.0" y="589" font-family="Inter" font-size="12.5" font-weight="400" fill="#A9BBD0" text-anchor="middle">Reenvía ESP-NOW</text>
+<rect x="1020" y="660" width="180" height="64" rx="10" fill="#FFFFFF" stroke="#DC2626" stroke-width="1.8"/>
+<path d="M1030,661 H1027 V723 H1030 A9,9 0 0 1 1021,714 V670 A9,9 0 0 1 1030,661 Z" fill="#DC2626"/>
+<text x="1114.0" y="687.0" font-family="Inter" font-size="16" font-weight="600" fill="#0F172A" text-anchor="middle">Batería</text>
+<text x="1114.0" y="707.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="middle">BMS + regulador 3,3 V</text>
+<path d="M1110,660 L1110,611" fill="none" stroke="#DC2626" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#e-pwr)"/>
+<rect x="1080.9" y="624" width="58.1" height="22" rx="11" fill="#FFFFFF" stroke="#DC2626" stroke-width="1.4"/>
+<text x="1110" y="639.2" font-family="DejaVu Sans Mono" font-size="12" font-weight="700" fill="#DC2626" text-anchor="middle">3,3 V</text>
+<rect x="1260" y="480" width="580" height="390" rx="18" fill="#FFFFFF" stroke="#C3CCD9" stroke-width="1.6"/>
+<text x="1817.6" y="512" font-family="Inter" font-size="13" font-weight="700" fill="#10243E" text-anchor="end" letter-spacing="1.6">NODO GATEWAY</text>
+<text x="1816" y="531" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="end">Punto seguro externo</text>
+<rect x="1300" y="540" width="220" height="155" rx="12" fill="#10243E"/>
+<text x="1410.0" y="569" font-family="Inter" font-size="16.5" font-weight="700" fill="#FFFFFF" text-anchor="middle">ESP32</text>
+<text x="1410.0" y="589" font-family="Inter" font-size="12.5" font-weight="400" fill="#A9BBD0" text-anchor="middle">Receptor ESP-NOW</text>
+<rect x="1316" y="613" width="188" height="64" rx="8" fill="#1E3A5F" stroke="#3F5F87" stroke-width="1.2"/>
+<text x="1410.0" y="640.0" font-family="Inter" font-size="15" font-weight="600" fill="#FFFFFF" text-anchor="middle">Recepción y registro</text>
+<text x="1410.0" y="660.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#B8C7D9" text-anchor="middle">ACK, validación, guardado</text>
+<rect x="1640" y="553" width="170" height="64" rx="10" fill="#FFFFFF" stroke="#0E7490" stroke-width="1.8" stroke-dasharray="7 5"/>
+<path d="M1650,554 H1647 V616 H1650 A9,9 0 0 1 1641,607 V563 A9,9 0 0 1 1650,554 Z" fill="#0E7490"/>
+<text x="1729.0" y="580.0" font-family="Inter" font-size="16" font-weight="600" fill="#0F172A" text-anchor="middle">LED de estado</text>
+<text x="1729.0" y="600.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="middle">Indicador para operario</text>
+<rect x="1640" y="628" width="170" height="64" rx="10" fill="#FFFFFF" stroke="#0E7490" stroke-width="1.8"/>
+<path d="M1650,629 H1647 V691 H1650 A9,9 0 0 1 1641,682 V638 A9,9 0 0 1 1650,629 Z" fill="#0E7490"/>
+<text x="1729.0" y="655.0" font-family="Inter" font-size="16" font-weight="600" fill="#0F172A" text-anchor="middle">Módulo microSD</text>
+<text x="1729.0" y="675.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="middle">Registro de eventos</text>
+<path d="M1521,585 L1639,585" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#e-data)"/>
+<rect x="1554.6" y="574" width="50.9" height="22" rx="11" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<text x="1580" y="589.2" font-family="DejaVu Sans Mono" font-size="12" font-weight="700" fill="#334155" text-anchor="middle">GPIO</text>
+<path d="M1521,660 L1639,660" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#e-data)"/>
+<rect x="1558.2" y="649" width="43.7" height="22" rx="11" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<text x="1580" y="664.2" font-family="DejaVu Sans Mono" font-size="12" font-weight="700" fill="#334155" text-anchor="middle">SPI</text>
+<rect x="1300" y="780" width="160" height="64" rx="10" fill="#FFFFFF" stroke="#DC2626" stroke-width="1.8"/>
+<path d="M1310,781 H1307 V843 H1310 A9,9 0 0 1 1301,834 V790 A9,9 0 0 1 1310,781 Z" fill="#DC2626"/>
+<text x="1384.0" y="807.0" font-family="Inter" font-size="16" font-weight="600" fill="#0F172A" text-anchor="middle">Regulador 3,3 V</text>
+<text x="1384.0" y="827.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="middle">Conversor DC-DC</text>
+<rect x="1495" y="780" width="180" height="64" rx="10" fill="#FFFFFF" stroke="#DC2626" stroke-width="1.8"/>
+<path d="M1505,781 H1502 V843 H1505 A9,9 0 0 1 1496,834 V790 A9,9 0 0 1 1505,781 Z" fill="#DC2626"/>
+<text x="1589.0" y="807.0" font-family="Inter" font-size="16" font-weight="600" fill="#0F172A" text-anchor="middle">Batería</text>
+<text x="1589.0" y="827.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="middle">Con BMS y carga</text>
+<path d="M1495,812 L1461,812" fill="none" stroke="#DC2626" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#e-pwr)"/>
+<path d="M1380,780 L1380,696" fill="none" stroke="#DC2626" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#e-pwr)"/>
+<rect x="1350.9" y="728" width="58.1" height="22" rx="11" fill="#FFFFFF" stroke="#DC2626" stroke-width="1.4"/>
+<text x="1380" y="743.2" font-family="DejaVu Sans Mono" font-size="12" font-weight="700" fill="#DC2626" text-anchor="middle">3,3 V</text>
+<path d="M1725,692 L1725,934" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#e-data)"/>
+<rect x="1652.6" y="892" width="144.8" height="22" rx="11" fill="#FFFFFF" stroke="#334155" stroke-width="1.4"/>
+<text x="1725" y="907.2" font-family="DejaVu Sans Mono" font-size="12" font-weight="700" fill="#334155" text-anchor="middle">Retiro de tarjeta</text>
+<rect x="1640" y="935" width="170" height="64" rx="10" fill="#FFFFFF" stroke="#475569" stroke-width="1.8"/>
+<path d="M1650,936 H1647 V998 H1650 A9,9 0 0 1 1641,989 V945 A9,9 0 0 1 1650,936 Z" fill="#475569"/>
+<text x="1729.0" y="962.0" font-family="Inter" font-size="16" font-weight="600" fill="#0F172A" text-anchor="middle">Operario</text>
+<text x="1729.0" y="982.0" font-family="Inter" font-size="12.5" font-weight="400" fill="#56657A" text-anchor="middle">Organismo de rescate</text>
+<text x="40" y="1060.5" font-family="Inter" font-size="11.5" font-weight="700" fill="#56657A" text-anchor="start" letter-spacing="1.4">LEYENDA</text>
+<path d="M127.85359374999999,1056 L167.85359375,1056" fill="none" stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#e-data)"/>
+<text x="177.85359375" y="1060.5" font-family="Inter" font-size="13" font-weight="400" fill="#0F172A" text-anchor="start">Datos (protocolo en la etiqueta)</text>
+<path d="M405.48249999999996,1056 L445.48249999999996,1056" fill="none" stroke="#DC2626" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#e-pwr)"/>
+<text x="455.48249999999996" y="1060.5" font-family="Inter" font-size="13" font-weight="400" fill="#0F172A" text-anchor="start">Alimentación</text>
+<path d="M569.0628125,1056 L609.0628125,1056" fill="none" stroke="#1D4ED8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="9 7" marker-end="url(#e-rf)"/>
+<text x="619.0628125" y="1060.5" font-family="Inter" font-size="13" font-weight="400" fill="#0F172A" text-anchor="start">Radio 2,4 GHz</text>
+<path d="M741.49328125,1046 L763.49328125,1046 L752.49328125,1064 Z" fill="#FFFFFF" stroke="#1D4ED8" stroke-width="2" stroke-linejoin="round"/>
+<text x="773.49328125" y="1060.5" font-family="Inter" font-size="13" font-weight="400" fill="#0F172A" text-anchor="start">Antena</text>
+<rect x="850.83" y="1047" width="22" height="18" rx="5" fill="#6D28D9"/>
+<text x="881.83" y="1060.5" font-family="Inter" font-size="13" font-weight="400" fill="#0F172A" text-anchor="start">Agente de IA</text>
+<rect x="995.05078125" y="1047" width="30" height="18" rx="5" fill="#FFFFFF" stroke="#56657A" stroke-width="1.6" stroke-dasharray="6 4"/>
+<text x="1034.05078125" y="1060.5" font-family="Inter" font-size="13" font-weight="400" fill="#0F172A" text-anchor="start">Opcional, por confirmar</text>
+</svg>
