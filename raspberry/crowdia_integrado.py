@@ -1,5 +1,17 @@
-import socket, time, math, threading, csv, os, hashlib
+import socket, time, math, threading, csv, os, hashlib, argparse
+from collections import deque
 import smbus
+
+# ============ ARGUMENTOS ============
+# Uso normal:        python3 crowdia_integrado.py
+# Recoleccion datos: python3 crowdia_integrado.py --etiqueta golpe
+#   (todos los eventos grabados en esa sesion quedan con esa etiqueta provisional)
+ETIQUETAS = ["sacudida", "golpe", "golpes_repetidos", "caminar", "puerta",
+             "objeto_cae", "sensor_movido", "otro"]
+_ap = argparse.ArgumentParser(description="CROWDIA: sismometro + dispositivos")
+_ap.add_argument("--etiqueta", choices=ETIQUETAS, default="",
+                 help="etiqueta provisional para los eventos de esta sesion")
+ARGS = _ap.parse_args()
 
 # ============ CONFIGURACION GENERAL ============
 CARPETA = os.path.expanduser("~/crowdia/datos")
@@ -7,6 +19,9 @@ os.makedirs(CARPETA, exist_ok=True)
 CSV_DISP = os.path.join(CARPETA, "dispositivos_v3.csv")
 CSV_RESUMEN = os.path.join(CARPETA, "resumen_v3.csv")
 CSV_SISMO = os.path.join(CARPETA, "sismos_v3.csv")
+CARPETA_EVT = os.path.expanduser("~/crowdia/eventos")
+os.makedirs(CARPETA_EVT, exist_ok=True)
+CSV_INDICE = os.path.join(CARPETA_EVT, "indice.csv")
 candado = threading.Lock()
 listo = threading.Event()
 
@@ -193,6 +208,28 @@ def leer():
     v = [(d[i] << 8) | d[i+1] for i in (0, 2, 4)]
     return [(x - 65536 if x > 32767 else x) / 16384 for x in v]
 
+# ============ GRABADOR DE EVENTOS (Agente IA 1, fase A) ============
+PRE_S = 5        # Segundos guardados ANTES del disparo
+POST_S = 2       # Segundos guardados DESPUES del fin del evento
+MAX_S = 60       # Duracion maxima de una grabacion
+
+def guardar_evento(muestras, meta):
+    # Un archivo por evento con la senal cruda (g) de los 3 ejes y la vibracion (mg)
+    nombre = "evt_" + time.strftime("%Y%m%d_%H%M%S", time.localtime(meta["t0"])) + ".csv"
+    ruta = os.path.join(CARPETA_EVT, nombre)
+    with open(ruta, "w", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["t_s", "ax_g", "ay_g", "az_g", "vib_mg"])
+        for t, x, y, z, a in muestras:
+            w.writerow([round(t - meta["t0"], 3), round(x, 5), round(y, 5), round(z, 5), round(a * 1000, 2)])
+    guardar(CSV_INDICE,
+            ["archivo", "fecha", "fs_hz", "regla_tipo", "duracion_s", "sobre_umbral_s",
+             "fraccion", "pico_mg", "alerta_regla", "etiqueta"],
+            [nombre, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(meta["t0"])), FS,
+             meta["tipo"], meta["dur"], meta["dsig"], meta["frac"], meta["pico"],
+             meta["alerta"], ARGS.etiqueta])
+    decir(f"[GRABADO] {nombre} ({len(muestras)} muestras, etiqueta: {ARGS.etiqueta or 'sin etiqueta'})")
+
 def sismo():
     decir(f"Calibrando {CAL_S} s: no toques el sensor ni la mesa")
     time.sleep(2)
@@ -204,12 +241,15 @@ def sismo():
     ruido = sum(math.dist(s, b) for s in m) / len(m)
     g = math.sqrt(sum(x * x for x in b))
     decir(f"Listo. Gravedad {g:.3f} g | Ruido {ruido*1000:.1f} mg | {len(m) / CAL_S:.0f} Hz")
-    decir(f"Escaneando dispositivos en ventanas de {DURACION_SCAN} s...\n")
+    decir(f"Escaneando dispositivos en ventanas de {DURACION_SCAN} s...")
+    decir(f"Eventos se graban en {CARPETA_EVT} | etiqueta de la sesion: {ARGS.etiqueta or 'ninguna'}\n")
     listo.set()
 
     sta, lta, pico, pmax = ruido, ruido, 0.0, 0.0
     evento, t0, t1, t2, exc, tot = False, 0.0, 0.0, 0.0, 0, 0
     n, t_sig = 0, time.time()
+    previo = deque(maxlen=PRE_S * FS)   # ultimos 5 s, siempre disponibles
+    captura = None                       # grabacion en curso
     while True:
         try:
             s = leer()
@@ -219,12 +259,26 @@ def sismo():
         b = [b[i] + (s[i] - b[i]) / (HP_S * FS) for i in range(3)]
         a = math.dist(s, b)
         ahora = time.time()
+        muestra = (ahora, s[0], s[1], s[2], a)
+        if captura is not None:
+            captura["datos"].append(muestra)
+            fin_post = captura["fin"] is not None and ahora >= captura["fin"] + POST_S
+            if captura["meta"] is None and ahora - captura["t0"] > MAX_S:
+                captura["meta"] = {"t0": captura["t0"], "tipo": "largo", "dur": round(ahora - captura["t0"], 2),
+                                   "dsig": 0, "frac": 0, "pico": round(pmax * 1000, 1), "alerta": False}
+            if fin_post or ahora - captura["t0"] > MAX_S:
+                threading.Thread(target=guardar_evento, args=(captura["datos"], captura["meta"]), daemon=True).start()
+                captura = None
+        previo.append(muestra)
         sta += (a - sta) / (STA_S * FS)
         if not evento: lta += (a - lta) / (LTA_S * FS)
         pico = max(pico * 0.995, a)
         r = sta / max(lta, 1e-4)
         if not evento and r >= ON:
             evento, t0, pmax, t1, t2, exc, tot = True, ahora, 0.0, 0.0, 0.0, 0, 0
+            if captura is not None:   # habia una grabacion en su tramo final: se guarda ya
+                threading.Thread(target=guardar_evento, args=(captura["datos"], captura["meta"]), daemon=True).start()
+            captura = {"t0": ahora, "fin": None, "datos": list(previo), "meta": None}
         if evento:
             pmax = max(pmax, a)
             if a * 1000 >= ALERTA_MG:
@@ -249,6 +303,10 @@ def sismo():
                     ["fecha", "tipo", "duracion_s", "sobre_umbral_s", "fraccion", "pico_mg", "intensidad", "alerta"],
                     [time.strftime("%Y-%m-%d %H:%M:%S"), tipo, round(dur, 2), round(dsig, 2),
                      round(frac, 2), round(pmax * 1000, 1), intensidad(pmax * 1000), alerta])
+            if captura is not None:
+                captura["fin"] = ahora
+                captura["meta"] = {"t0": t0, "tipo": tipo, "dur": round(dur, 2), "dsig": round(dsig, 2),
+                                   "frac": round(frac, 2), "pico": round(pmax * 1000, 1), "alerta": alerta}
         n += 1
         if n % 5 == 0:
             estado = f"EVENTO {dur:3.1f}s" if evento else "Reposo"

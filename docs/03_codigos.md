@@ -9,6 +9,7 @@ Mapa rápido:
 | [`esp32/snifferCable/snifferCable.ino`](../esp32/snifferCable/snifferCable.ino) | ESP32 | Alternativa por USB, aún no integrada | Equipo |
 | [`raspberry/crowdia_integrado.py`](../raspberry/crowdia_integrado.py) | Raspberry Pi | ✅ **Programa principal (v3)** | 22/11 |
 | [`raspberry/ver_macs.py`](../raspberry/ver_macs.py) | Raspberry Pi | Herramienta de diagnóstico | 22/11 |
+| [`raspberry/etiquetar.py`](../raspberry/etiquetar.py) | Raspberry Pi | Etiquetado de eventos para el Agente IA 1 | 22/11 |
 | [`raspberry/pruebas/mpu_test.py`](../raspberry/pruebas/mpu_test.py) | Raspberry Pi | Prueba de la IMU | 9/11 |
 | [`raspberry/pruebas/pruebaLCD.py`](../raspberry/pruebas/pruebaLCD.py) | Raspberry Pi | Prueba de la LCD | Equipo |
 | [`raspberry/historial/`](../raspberry/historial/) | — | Versiones anteriores, para documentar la evolución | — |
@@ -70,7 +71,7 @@ como versión anterior.
 
 ---
 
-## 3.2 Programa principal: `raspberry/crowdia_integrado.py` (versión 3)
+## 3.2 Programa principal: `raspberry/crowdia_integrado.py` (versión 4)
 
 Corre en la Raspberry Pi y hace tres cosas **al mismo tiempo** (en hilos separados):
 
@@ -192,7 +193,26 @@ SHA-256 de la MAC con una "sal"). Sirve para saber si un equipo se repite entre 
 su identidad. *La sal está escrita en el código (`SAL = "crowdia-2026"`); en un despliegue real debe
 ser secreta.*
 
-### 3.2.4 Parámetros que se pueden ajustar
+### 3.2.4 Grabador de eventos (Agente IA 1, fase A)
+
+Para entrenar el Agente IA 1 se necesita la **señal cruda** de cada evento, no solo su resumen. El
+programa guarda siempre los últimos 5 s de la IMU en una memoria circular; cuando STA/LTA dispara un
+evento, graba desde **5 s antes** del disparo hasta **2 s después** del final (máximo 60 s).
+
+| Archivo (en `~/crowdia/eventos/`) | Contenido |
+|---|---|
+| `evt_AAAAMMDD_HHMMSS.csv` | Una fila por muestra (50 por segundo): `t_s` (tiempo relativo al disparo; negativo = antes), `ax_g`, `ay_g`, `az_g` (aceleración cruda en g) y `vib_mg` (vibración sin gravedad) |
+| `indice.csv` | Una fila por evento: archivo, fecha, frecuencia de muestreo, lo que decidió la regla actual (tipo, duración, sobre umbral, fracción, pico, alerta) y la **etiqueta** |
+
+La etiqueta se puede dar de dos formas:
+- **Al grabar:** `python3 crowdia_integrado.py --etiqueta golpe` deja todos los eventos de esa sesión
+  con esa etiqueta. Es lo más rápido para recolectar datos clase por clase.
+- **Después:** con [`raspberry/etiquetar.py`](../raspberry/etiquetar.py) (ver sección 3.3).
+
+Etiquetas: `sacudida`, `golpe`, `golpes_repetidos`, `caminar`, `puerta`, `objeto_cae`,
+`sensor_movido`, `otro`.
+
+### 3.2.5 Parámetros que se pueden ajustar
 
 | Parámetro | Valor | Qué controla |
 |---|---|---|
@@ -217,6 +237,13 @@ ser secreta.*
 Diagnóstico: escucha 60 s el puerto 5005 y muestra una tabla con cada MAC, paquetes, RSSI máximo,
 tipo y notas (Raspberry Pi, MAC aleatoria, débil). Sirvió para identificar qué dispositivo era cada
 MAC. **No se puede correr al mismo tiempo que el integrado** (ambos usan el puerto 5005).
+
+### `raspberry/etiquetar.py`
+Recorre `~/crowdia/eventos/indice.csv` y muestra cada evento con lo que midió la regla (duración,
+fracción sobre umbral, pico). Se le asigna la etiqueta escribiendo un número.
+- `python3 etiquetar.py`: solo los eventos sin etiqueta.
+- `python3 etiquetar.py --todas`: todos, para corregir.
+- `python3 etiquetar.py --resumen`: cuántos eventos hay por etiqueta.
 
 ### `raspberry/pruebas/mpu_test.py`
 Primera prueba de la IMU: imprime los 3 ejes del acelerómetro (g), del giroscopio (°/s) y la
@@ -243,7 +270,8 @@ Todas las versiones están en [`raspberry/historial/`](../raspberry/historial/).
 | Integrado de PicoClaw | `historial/integrado_picoclaw.py` | Primer programa que unió sismo y sniffer (lo generó el agente PicoClaw) | Se quedaba en "EVENTO" desde el inicio (STA y LTA arrancaban en 0); no guardaba CSV |
 | Integrado v1 | `historial/crowdia_integrado_v1.py` | Sismo v4 + sniffer + tabla por ventana + CSV con MAC hasheadas | Alerta pegada al inclinarse el sensor |
 | Integrado v2 | `historial/crowdia_integrado_v2.py` | **Filtro pasa-altos** por eje (soluciona la alerta pegada) + **buzzer** + columna "probable celular" | Contaba hasta 9 equipos con ~4 reales (MAC aleatorias) |
-| **Integrado v3** | `crowdia_integrado.py` | **Persistencia y agrupación** de MAC aleatorias, CSV de resumen por ventana | Versión actual |
+| Integrado v3 | `historial/crowdia_integrado_v3.py` | **Persistencia y agrupación** de MAC aleatorias, CSV de resumen por ventana | Faltaba guardar la señal cruda para entrenar la IA |
+| **Integrado v4** | `crowdia_integrado.py` | **Grabador de eventos** (señal cruda) y opción `--etiqueta` | Versión actual |
 
 ---
 
