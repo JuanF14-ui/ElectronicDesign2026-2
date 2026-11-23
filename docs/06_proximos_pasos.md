@@ -47,6 +47,32 @@ Lo que convierte a cada uno en un **agente** es el ciclo percibir → decidir �
 | C. Entrenar | Calcular rasgos, entrenar 2–3 modelos pequeños, validación cruzada y matriz de confusión | PC |
 | D. Integrar | Copiar el modelo elegido al programa de la Pi | Pi |
 
+### Fase A: cómo recolectar los datos
+
+El grabador ya está en `crowdia_integrado.py` (v4). Protocolo propuesto (cantidades estimadas):
+
+| Clase | Cómo producirla | Eventos |
+|---|---|---|
+| `sacudida` | Empujar la mesa de lado a lado de forma continua 3–10 s. Variar fuerza (suave/fuerte), ritmo (lento 1–2 vaivenes por segundo / rápido 3–5) y dirección | 30 |
+| `golpe` | Un golpe seco. Variar fuerza y sitio de la mesa | 30 |
+| `golpes_repetidos` | Series de 3 a 8 golpes con ritmos distintos | 30 |
+| `caminar` | Caminar fuerte o saltar junto a la mesa (puede que no siempre dispare) | Los que salgan |
+| `puerta` | Cerrar una puerta o un cajón cerca | 15 |
+| `objeto_cae` | Dejar caer un libro sobre la mesa o el piso | 15 |
+| `sensor_movido` | Inclinar o mover el sensor o la protoboard | 15 |
+
+Reglas para que los datos sirvan:
+1. **Una clase por sesión:** `python3 crowdia_integrado.py --etiqueta CLASE`.
+2. **Esperar 15–20 s entre eventos** para que queden separados y el ruido de fondo se estabilice.
+3. **Sensor fijo** y en el mismo lugar en todas las sesiones.
+4. Si algo sale distinto a lo planeado (por ejemplo, un golpe de más), anotar la hora y corregir
+   después con `python3 etiquetar.py --todas`.
+5. Revisar el avance con `python3 etiquetar.py --resumen`.
+
+Para la fase C, el entrenamiento puede hacerse en la misma Pi con scikit-learn
+(`sudo apt install python3-sklearn`), lo que evita tener que copiar los datos al PC. Con unos cientos
+de eventos el entrenamiento de un modelo pequeño debería tardar poco (estimado).
+
 ## 6.3 Papel de PicoClaw
 
 PicoClaw es un asistente de IA (Gemini) instalado en la Pi, con el que se habla por Telegram. Puede
@@ -69,7 +95,7 @@ ID de Telegram autorizado, dejar `restrict_to_workspace` activado, no exponer la
 
 | Pendiente | Prioridad |
 |---|---|
-| Agente IA 1, fase A: grabar la señal cruda de los eventos | Alta |
+| Agente IA 1, fase A: **recolectar** los eventos con el protocolo de la sección 6.2 | Alta |
 | Agente IA 2: huella de Information Elements en el ESP32 | Media |
 | Cambiar el enlace UDP/hotspot por **ESP-NOW** (sin router) y construir el gateway (ESP32 + microSD) | Media |
 | Envío por broadcast o IP fija, para no reprogramar el ESP32 cada vez que cambia la IP | Media |
