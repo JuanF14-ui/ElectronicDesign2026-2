@@ -1,0 +1,11 @@
+fecha,tipo,duracion_s,sobre_umbral_s,fraccion,pico_mg,intensidad,alerta
+2026-11-22 21:04:06,golpe/impulso,1.94,0.2,0.06,141.6,VI,False
+2026-11-22 21:11:26,sostenido,7.84,5.18,0.41,252.1,VII,True
+2026-11-22 21:14:46,sostenido,7.56,5.86,0.5,461.9,VIII,True
+2026-11-22 21:15:02,golpe/impulso,1.5,0.0,0.0,24.6,IV,False
+2026-11-22 21:20:30,sostenido,9.16,6.34,0.21,77.1,V,True
+2026-11-22 21:20:43,golpe/impulso,2.08,0.4,0.14,679.4,IX+,False
+2026-11-22 21:20:47,golpe/impulso,2.06,0.4,0.14,386.0,VIII,False
+2026-11-22 21:20:54,golpe/impulso,1.96,0.36,0.14,924.1,IX+,False
+2026-11-22 21:21:26,golpe/impulso,1.9,0.3,0.12,732.2,IX+,False
+2026-11-22 21:21:50,sostenido,9.2,7.1,0.41,110.2,VI,True

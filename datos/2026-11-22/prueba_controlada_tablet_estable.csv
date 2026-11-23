@@ -1,0 +1,8 @@
+fecha,ventana,id_hash,aleatoria,paquetes,rssi_max,tipos,estado,grupo
+2026-11-22 21:07:34,4,48b73dfff4a5,True,11,-59,MGMT,estable,
+2026-11-22 21:14:35,11,f3aee4932c0b,True,140,-59,DATA/MGMT,estable,
+2026-11-22 21:15:35,12,f3aee4932c0b,True,79,-55,DATA/MGMT,estable,
+2026-11-22 21:16:35,13,f3aee4932c0b,True,191,-53,DATA/MGMT,estable,
+2026-11-22 21:17:35,14,f3aee4932c0b,True,285,-47,DATA/MGMT,estable,
+2026-11-22 21:18:35,15,f3aee4932c0b,True,41,-62,DATA,estable,
+2026-11-22 21:20:35,17,f3aee4932c0b,True,21,-53,DATA/MGMT,estable,

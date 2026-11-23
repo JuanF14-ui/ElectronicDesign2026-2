@@ -12,11 +12,15 @@ y cuenta los celulares cercanos con sniffers Wi-Fi, sin internet y con baterías
 | `sniffer/` | ESP32 conectado a una red, captura en modo promiscuo y envía por UDP a la Raspberry Pi |
 | `snifferNodo/` | Igual que `sniffer/`, para varios nodos (`NODO_1`, `NODO_2`, ...) |
 | `snifferCable/` | ESP32 sin conectarse a ninguna red: salta por los canales 1–13 y envía por USB serie |
-| `sismo/crowdia_sismo4.py` | Detector sísmico en la Raspberry Pi (MPU6050, STA/LTA, intensidad, duración sobre umbral) |
+| `crowdia/crowdia_integrado.py` | **Programa principal** en la Raspberry Pi: sismómetro + conteo de dispositivos + buzzer + CSV |
+| `crowdia/ver_macs.py` | Diagnóstico: lista las MAC que envía el ESP32 durante 60 s |
+| `sismo/crowdia_sismo4.py` | Detector sísmico solo (versión anterior al integrado) |
 | `sismo/mpu_test.py` | Prueba básica de lectura de la MPU6050 |
 | `pruebaLCD.py` | Prueba de la LCD 16×2 (HD44780) |
 | `simulaciones/` | Simulaciones LTspice |
 | `docs/` | Diagrama de bloques (PNG y SVG) |
+| `docs/bitacora/` | Bitácora de trabajo por fecha, con pruebas y resultados |
+| `datos/` | Datos de las pruebas (MAC guardadas como hash) |
 
 ## Credenciales (antes de compilar los sketches)
 
@@ -44,6 +48,7 @@ Para no contar equipos que no son celulares, los sketches descartan:
 | MPU6050 VCC / GND / AD0 | 3,3 V / GND / GND | 1 / 6 / 14 |
 | LCD RS / E | 15 / 10 | 10 / 19 |
 | LCD D4 / D5 / D6 / D7 | 11 / 19 / 6 / 26 | 23 / 35 / 31 / 37 |
+| Buzzer (base del transistor) | 17 (confirmar) | 11 |
 
 El bus 3 se crea con esta línea en `/boot/firmware/config.txt`:
 
