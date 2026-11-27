@@ -287,6 +287,32 @@ entrenamiento):
 **Siguiente:** grabar `golpes_repetidos` (la clase crítica), luego `caminar`, `puerta`, `objeto_cae` y
 `sensor_movido`, y completar sacudidas hasta unas 30.
 
+## P15. Integración de la LCD y cambio de pines (26 nov) — [`crowdia_integrado.py`](../raspberry/crowdia_integrado.py) v5
+
+**Objetivo:** mostrar en una LCD 16×2 lo que va detectando el programa, sin depender de un PC.
+
+**Problema de partida:** la LCD se cableó en GPIO17, 18, 27, 22, 23 y 24, y tres de esos pines ya
+estaban ocupados (GPIO17 por el buzzer y GPIO23/24 por el I2C de la MPU6050). Además, varios pines de
+la placa resultaron dañados (2, 6, 14, 22, 30, 32, 34 y 38), entre ellos casi todos los de 5 V y GND.
+
+**Cambios:**
+
+| Qué | Antes | Ahora |
+|---|---|---|
+| MPU6050 (I2C bus 3) | GPIO23/24, pines 16/18 | **GPIO5/6, pines 29/31** (nuevo `dtoverlay`) |
+| Buzzer | GPIO17, pin 11 | **GPIO26, pin 37** |
+| 5 V y GND | Pines 2, 6 y 14 | Rieles de la protoboard desde los **pines 4 y 39** |
+| LCD | Solo en `pruebaLCD.py` | Integrada al programa principal |
+
+**Problemas durante la prueba:**
+
+| Error | Causa | Solución |
+|---|---|---|
+| `AVISO: LCD desactivada (No module named 'luma')` | Faltaba la librería | `pip3 install luma.lcd --break-system-packages` |
+| `cannot import name 'bitbang_6800' from 'luma.core.interface.serial'` | Importación equivocada (venía de `pruebaLCD.py`) | Importar desde `luma.core.interface.parallel` |
+
+**Resultado:** ✅ el programa v5 funciona con la LCD, el sensor y el buzzer en los pines nuevos.
+
 ## Pruebas pendientes
 
 - Repetir la prueba controlada con **dos o más celulares** propios en el cuarto.

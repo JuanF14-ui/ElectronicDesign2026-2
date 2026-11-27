@@ -63,7 +63,7 @@ Lo que convierte a cada uno en un **agente** es el ciclo percibir → decidir �
 | `sensor_movido` | 15 | 0 |
 
 
-El grabador ya está en `crowdia_integrado.py` (v4). Protocolo propuesto (cantidades estimadas):
+El grabador está en `crowdia_integrado.py` (desde la v4). Protocolo propuesto (cantidades estimadas):
 
 | Clase | Cómo producirla | Eventos |
 |---|---|---|
@@ -116,8 +116,7 @@ ID de Telegram autorizado, dejar `restrict_to_workspace` activado, no exponer la
 | Nodos satélite (3+ ESP32) para trilateración | Baja |
 | Etapa de potencia con baterías y medición de consumo | Media |
 | BOM con referencias, precios y proveedores | Media |
-| Confirmar el pin del buzzer y si es activo o pasivo | Baja |
-| Recablear D7 de la LCD al pin 37 | Baja |
+| Registrar el transistor y la resistencia del buzzer, y si es activo o pasivo | Baja |
 | Identificar el equipo con MAC fija F8:43:EF:AA:25:E0 | Baja |
 | Subir al repo los scripts que quedaron en `~/.picoclaw/workspace/` | Baja |
 | **Cambiar las claves Wi-Fi** que quedaron en el historial público del repositorio | Alta |

@@ -7,11 +7,12 @@ Mapa rápido:
 | [`esp32/snifferNodo/snifferNodo.ino`](../esp32/snifferNodo/snifferNodo.ino) | ESP32 | ✅ **En uso** con el programa integrado | Equipo, corregido el 22/11 |
 | [`esp32/sniffer/sniffer.ino`](../esp32/sniffer/sniffer.ino) | ESP32 | Versión anterior (3 campos) | Equipo |
 | [`esp32/snifferCable/snifferCable.ino`](../esp32/snifferCable/snifferCable.ino) | ESP32 | Alternativa por USB, aún no integrada | Equipo |
-| [`raspberry/crowdia_integrado.py`](../raspberry/crowdia_integrado.py) | Raspberry Pi | ✅ **Programa principal (v3)** | 22/11 |
+| [`raspberry/crowdia_integrado.py`](../raspberry/crowdia_integrado.py) | Raspberry Pi | ✅ **Programa principal (v5, con LCD)** | 26/11 |
 | [`raspberry/ver_macs.py`](../raspberry/ver_macs.py) | Raspberry Pi | Herramienta de diagnóstico | 22/11 |
 | [`raspberry/etiquetar.py`](../raspberry/etiquetar.py) | Raspberry Pi | Etiquetado de eventos para el Agente IA 1 | 22/11 |
 | [`raspberry/pruebas/mpu_test.py`](../raspberry/pruebas/mpu_test.py) | Raspberry Pi | Prueba de la IMU | 9/11 |
-| [`raspberry/pruebas/pruebaLCD.py`](../raspberry/pruebas/pruebaLCD.py) | Raspberry Pi | Prueba de la LCD | Equipo |
+| [`raspberry/pruebas/pruebaLCD.py`](../raspberry/pruebas/pruebaLCD.py) | Raspberry Pi | Prueba de la LCD | Equipo, corregido el 26/11 |
+| [`raspberry/pruebas/prueba_buzzer.py`](../raspberry/pruebas/prueba_buzzer.py) | Raspberry Pi | Prueba del buzzer | 26/11 |
 | [`raspberry/historial/`](../raspberry/historial/) | — | Versiones anteriores, para documentar la evolución | — |
 | [`simulaciones/`](../simulaciones/) | LTspice | Ver sección 3.5 | Equipo |
 
@@ -71,7 +72,7 @@ como versión anterior.
 
 ---
 
-## 3.2 Programa principal: `raspberry/crowdia_integrado.py` (versión 4)
+## 3.2 Programa principal: `raspberry/crowdia_integrado.py` (versión 5)
 
 Corre en la Raspberry Pi y hace tres cosas **al mismo tiempo** (en hilos separados):
 
@@ -212,7 +213,29 @@ La etiqueta se puede dar de dos formas:
 Etiquetas: `sacudida`, `golpe`, `golpes_repetidos`, `caminar`, `puerta`, `objeto_cae`,
 `sensor_movido`, `otro`.
 
-### 3.2.5 Parámetros que se pueden ajustar
+### 3.2.5 Pantalla LCD (desde la v5)
+
+La LCD 16×2 muestra lo mismo que la terminal, resumido, para no depender de un PC:
+
+| Línea | Quién la escribe | Contenido |
+|---|---|---|
+| 1 | Sismómetro, 10 veces por segundo | `Reposo N mg`, `Evento Ns N mg` o `ALERTA SISMO <intensidad>` |
+| 2 | Sniffer, al final de cada ventana de 60 s | `Cel:N Eq:N S<ventana>` o `Sin ESP32 S<ventana>` si no llegó nada |
+
+Cómo funciona:
+1. Hay un diccionario `pantalla` con las dos líneas. El sismómetro y el sniffer solo escriben texto
+   ahí; ninguno toca la LCD directamente.
+2. Un hilo aparte (`lcd_bucle`) revisa ese diccionario cada 0,5 s y escribe en la LCD **solo si algo
+   cambió**. Escribir en una LCD por bit-banging es lento; si lo hiciera el sismómetro, perdería
+   muestras de los 50 Hz.
+3. Cada línea se corta o se rellena a 16 caracteres para que no queden letras viejas.
+4. Todo va dentro de `try/except`: si la LCD no está o falla, el programa sigue funcionando sin ella
+   y muestra `AVISO: LCD desactivada (...)`.
+
+La librería es `luma.lcd` (clase `hd44780`), con la interfaz `bitbang_6800` de
+`luma.core.interface.parallel` en modo de 4 bits.
+
+### 3.2.6 Parámetros que se pueden ajustar
 
 | Parámetro | Valor | Qué controla |
 |---|---|---|
@@ -252,7 +275,12 @@ dentro de especificación) y el giroscopio con un desfase de 1–2 °/s.
 
 ### `raspberry/pruebas/pruebaLCD.py`
 Muestra "hello, world!" y un contador en la LCD 16×2 usando la librería `luma.lcd`, en modo paralelo
-de 4 bits. D7 se movió de GPIO24 a **GPIO26** para no chocar con el I2C de la IMU.
+de 4 bits (RS = GPIO17, E = GPIO18, D4–D7 = GPIO27, 22, 23, 24). El 26/11 se corrigió la importación:
+`bitbang_6800` está en `luma.core.interface.parallel`, no en `.serial`.
+
+### `raspberry/pruebas/prueba_buzzer.py`
+Hace sonar el buzzer (GPIO26) con 3 pitidos cortos y uno largo. Sirve para comprobar el transistor y
+el cableado sin correr el programa completo.
 
 ---
 
@@ -271,7 +299,8 @@ Todas las versiones están en [`raspberry/historial/`](../raspberry/historial/).
 | Integrado v1 | `historial/crowdia_integrado_v1.py` | Sismo v4 + sniffer + tabla por ventana + CSV con MAC hasheadas | Alerta pegada al inclinarse el sensor |
 | Integrado v2 | `historial/crowdia_integrado_v2.py` | **Filtro pasa-altos** por eje (soluciona la alerta pegada) + **buzzer** + columna "probable celular" | Contaba hasta 9 equipos con ~4 reales (MAC aleatorias) |
 | Integrado v3 | `historial/crowdia_integrado_v3.py` | **Persistencia y agrupación** de MAC aleatorias, CSV de resumen por ventana | Faltaba guardar la señal cruda para entrenar la IA |
-| **Integrado v4** | `crowdia_integrado.py` | **Grabador de eventos** (señal cruda) y opción `--etiqueta` | Versión actual |
+| Integrado v4 | `historial/crowdia_integrado_v4.py` | **Grabador de eventos** (señal cruda) y opción `--etiqueta` | Se agregó la LCD |
+| **Integrado v5** | `crowdia_integrado.py` | **Pantalla LCD** y pines nuevos (MPU6050 en GPIO5/6, buzzer en GPIO26) | Versión actual |
 
 ---
 

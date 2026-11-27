@@ -1,3 +1,9 @@
+# CROWDIA - Programa integrado v5 (nodo sniffer en la Raspberry Pi Zero 2 W)
+# Sismometro (MPU6050) + conteo de dispositivos (ESP32 por UDP) + buzzer + LCD 16x2 + CSV
+# Conexiones (ver docs/02_hardware_y_conexiones.md):
+#   MPU6050: I2C por software bus 3, SDA = GPIO5 (pin 29), SCL = GPIO6 (pin 31)
+#   Buzzer:  GPIO26 (pin 37) a la base del transistor
+#   LCD:     RS = GPIO17, E = GPIO18, D4..D7 = GPIO27, 22, 23, 24
 import socket, time, math, threading, csv, os, hashlib, argparse
 from collections import deque
 import smbus
@@ -36,8 +42,34 @@ def guardar(archivo, encabezado, fila):
         if nuevo: w.writerow(encabezado)
         w.writerow(fila)
 
+# ============ PANTALLA LCD 16x2 ============
+LCD_RS, LCD_E = 17, 18           # GPIO (BCM) de RS y E
+LCD_D = [27, 22, 23, 24]         # GPIO (BCM) de D4, D5, D6, D7
+LCD_COLS = 16                    # caracteres por linea
+pantalla = {"l1": "CROWDIA", "l2": "Calibrando..."}   # linea 1: sismo | linea 2: celulares
+try:
+    from luma.core.interface.parallel import bitbang_6800
+    from luma.lcd.device import hd44780
+    _lcd = hd44780(bitbang_6800(RS=LCD_RS, E=LCD_E, PINS=LCD_D), width=LCD_COLS, height=2)
+except Exception as e:
+    _lcd = None
+    print(f"AVISO: LCD desactivada ({e})")
+
+def lcd_bucle():
+    # Hilo aparte: refresca la LCD cada 0,5 s solo si cambio algo (no frena el sensor)
+    anterior = None
+    while True:
+        txt = pantalla["l1"][:LCD_COLS].ljust(LCD_COLS) + "\n" + pantalla["l2"][:LCD_COLS].ljust(LCD_COLS)
+        if _lcd and txt != anterior:
+            try:
+                _lcd.text = txt
+                anterior = txt
+            except Exception:
+                pass
+        time.sleep(0.5)
+
 # ============ BUZZER ============
-BUZZER_PIN = 17          # GPIO (BCM) donde va la base del transistor
+BUZZER_PIN = 26          # GPIO (BCM) donde va la base del transistor
 BUZZER_ACTIVO = True     # True: buzzer activo (suena con DC). False: pasivo (necesita tono)
 FREQ_TONO = 2000         # Hz, solo para buzzer pasivo
 BUZZER_MG = 92           # Sismo "fuerte": pico >= 92 mg (intensidad VI de Wald)
@@ -146,6 +178,7 @@ def reportar(ventana, vistos, historial):
     txt += f"{'MAC':<18} {'paquetes':>8} {'RSSI max':>8}  {'tipo':<9} {'estado':<8} {'grupo':<8} nota\n"
     txt += "\n".join(filas) if filas else "(no llego ningun paquete del ESP32)"
     decir(txt + "\n")
+    pantalla["l2"] = f"Cel:{celulares} Eq:{estimado} S{ventana}" if filas else f"Sin ESP32  S{ventana}"
     return celulares
 
 def sniffer():
@@ -174,7 +207,8 @@ def sniffer():
             zumbador.pitidos(min(celulares - cel_antes, 3))
         cel_antes = celulares
 
-# ============ SISMOMETRO (version 4) ============
+# ============ SISMOMETRO ============
+# MPU6050 en I2C por software, bus 3: SDA = GPIO5 (pin 29), SCL = GPIO6 (pin 31)
 bus = smbus.SMBus(3)
 ADDR = 0x68
 bus.write_byte_data(ADDR, 0x6B, 0)
@@ -240,6 +274,7 @@ def sismo():
     b = [sum(s[i] for s in m) / len(m) for i in range(3)]
     ruido = sum(math.dist(s, b) for s in m) / len(m)
     g = math.sqrt(sum(x * x for x in b))
+    pantalla["l1"] = "Listo"
     decir(f"Listo. Gravedad {g:.3f} g | Ruido {ruido*1000:.1f} mg | {len(m) / CAL_S:.0f} Hz")
     decir(f"Escaneando dispositivos en ventanas de {DURACION_SCAN} s...")
     decir(f"Eventos se graban en {CARPETA_EVT} | etiqueta de la sesion: {ARGS.etiqueta or 'ninguna'}\n")
@@ -312,6 +347,9 @@ def sismo():
             estado = f"EVENTO {dur:3.1f}s" if evento else "Reposo"
             if alerta: estado = "ALERTA SISMO"
             ints = intensidad(pmax * 1000) if evento else "-"
+            if alerta: pantalla["l1"] = f"ALERTA SISMO {ints}"
+            elif evento: pantalla["l1"] = f"Evento {dur:.0f}s {pmax*1000:.0f}mg"
+            else: pantalla["l1"] = f"Reposo {sta*1000:.0f} mg"
             txt = f"\r{estado:<12} |{barra(sta*1000):<25}|"
             txt += f" Vib {sta*1000:5.1f} mg | Pico {pico*1000:5.1f} mg"
             txt += f" | R {r:4.1f} | Int {ints:<6}  "
@@ -321,6 +359,7 @@ def sismo():
 
 # ============ ARRANQUE ============
 if __name__ == "__main__":
+    threading.Thread(target=lcd_bucle, daemon=True).start()
     threading.Thread(target=sismo, daemon=True).start()
     listo.wait()
     threading.Thread(target=sniffer, daemon=True).start()
@@ -329,4 +368,5 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         zumbador.alarma = False
         if _dev: _dev.off()
+        if _lcd: _lcd.clear()
         decir(f"\nDetenido. Datos guardados en {CARPETA}")
