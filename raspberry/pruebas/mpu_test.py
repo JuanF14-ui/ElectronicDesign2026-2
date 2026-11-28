@@ -1,6 +1,7 @@
-# Prueba basica de la MPU6050 en el bus I2C por software (GPIO23 = SDA, GPIO24 = SCL).
+# Prueba basica de la MPU6050 en el bus I2C por software (GPIO5 = SDA pin 29, GPIO6 = SCL pin 31).
 # Requiere en /boot/firmware/config.txt:
-#   dtoverlay=i2c-gpio,bus=3,i2c_gpio_sda=23,i2c_gpio_scl=24
+#   dtoverlay=i2c-gpio,bus=3,i2c_gpio_sda=5,i2c_gpio_scl=6
+# (hasta el 26/11 eran GPIO23/24; se cambiaron porque ahora los usa la LCD)
 import smbus, time
 bus = smbus.SMBus(3)
 ADDR = 0x68

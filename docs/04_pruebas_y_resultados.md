@@ -8,8 +8,8 @@ Los datos crudos están en [`datos/`](../datos/).
 | Aspecto | Resultado | Prueba |
 |---|---|---|
 | Ruido del acelerómetro en reposo | 1,8–4,9 mg (≈ 3 mg con buena calibración) | P3, P4, P6 |
-| Golpes aislados | 7 de 7 clasificados como golpe, sin alerta, con picos de hasta 924 mg | P13 |
-| Sacudidas sostenidas | 2 de 3 con alerta en la prueba controlada; 2 de 2 en la sesión 1 | P11, P13 |
+| Golpes aislados | 7 de 7 en P13 y 20 de 20 en P14 clasificados como golpe, sin alerta, con picos de hasta 1097 mg | P13, P14 |
+| Sacudidas sostenidas | 2 de 3 con alerta en la prueba controlada; 2 de 2 en la sesión 1; 15 de 15 en la recolección | P11, P13, P14 |
 | Golpes repetidos | 2 de 2 dieron **falsa alerta** | P13 |
 | Línea base de dispositivos (sin equipos activos) | 0 celulares falsos | P12, P13 |
 | Sobreconteo por MAC aleatoria | Sin agrupar: hasta +7 sobre lo real (y hasta 21 MAC en un minuto). Con agrupación: +0 a +2 | P11–P13 |
@@ -238,9 +238,84 @@ Smart TV. Cada fase dura 3 ventanas de 60 s; los cambios se hicieron al aparecer
 7. La intensidad de las sacudidas a mano sale muy alta (hasta IX+) porque una mesa sacudida no es el
    suelo: la escala de Wald se aplica a la aceleración del terreno.
 
+## P14. Recolección de datos, fase A del Agente IA 1 (22 nov, 23:39–23:55) — [`crowdia_integrado.py`](../raspberry/crowdia_integrado.py) v4
+
+Datos: [`datos/recoleccion_faseA_2026-11-22/`](../datos/recoleccion_faseA_2026-11-22/) (37 eventos + `indice.csv`).
+Qué contiene cada archivo: ver el [README de esos datos](../datos/recoleccion_faseA_2026-11-22/README.md).
+
+**Objetivo:** empezar a juntar ejemplos etiquetados para entrenar el Agente IA 1. Esta primera sesión
+cubre solo las dos clases más fáciles: `sacudida` (imita un sismo) y `golpe` (un golpe seco).
+
+**Montaje:** Pi y MPU6050 fijos sobre la mesa. Se corrió el programa una vez por clase:
+`python3 crowdia_integrado.py --etiqueta sacudida` y luego `--etiqueta golpe`. Cada evento quedó
+grabado con 5 s antes del disparo y 2 s después del final, a 50 Hz.
+
+**Resultado de la regla actual (STA/LTA + duración sobre umbral) por clase:**
+
+| Clase | Eventos | Tipo según la regla | Duración | Sobre umbral | Fracción | Pico | Alerta |
+|---|---|---|---|---|---|---|---|
+| `sacudida` | 15 | todos "sostenido" | 8,9–17,5 s (mediana 10,7) | 7,1–15,5 s | 40–70 % | 98–298 mg | **15/15** ✅ |
+| `golpe` | 20 | todos "golpe/impulso" | 1,6–4,3 s (mediana 2,3) | 0–1,2 s | 0–20 % | 16–1097 mg | **0/20** ✅ |
+| `golpe` (dudosos) | 2 | "sostenido" | 16–18 s | 14–16 s | 30–53 % | 99–146 mg | 2/2 |
+
+**Rasgos candidatos para el modelo** (calculados desde el disparo; primera mirada, no es todavía el
+entrenamiento):
+
+| Rasgo | Sacudida (mediana, rango) | Golpe (mediana, rango) | ¿Separa? |
+|---|---|---|---|
+| IQR de la vibración | 50 mg (37–68) | 6 mg (3–16) | Sí, mucho |
+| CAV | 5,2 m/s (3,9–7,8) | 0,6 m/s (0,2–1,3) | Sí, mucho |
+| Factor de cresta (pico ÷ RMS) | 3,0 (2,4–5,4) | 8,9 (4,4–12,1) | Casi (se cruzan entre 4,4 y 5,4) |
+| Número de picos > 39 mg | 26 (19–80) | 3 (1–11) | Sí |
+| Cruces por cero por segundo | 10,5 (8,9–22,1) | 16,3 (8,0–24,6) | No, se traslapan |
+
+**Observaciones:**
+1. **Dos eventos al inicio parecen mal etiquetados.** Los de las 23:39:21 y 23:39:57 están marcados
+   como `golpe`, pero duran 16–18 s, la regla los vio como "sostenido" y todos sus rasgos se parecen a
+   los de una sacudida. Lo más probable es que fueran sacudidas de prueba hechas antes de cambiar de
+   sesión. **Hay que confirmarlo y corregirlos** antes de entrenar (con `etiquetar.py --todas`).
+2. **Un golpe muy débil:** el de las 23:50:30 tiene pico de solo 15,6 mg (casi ruido). Se deja como
+   `golpe`, pero sirve de recordatorio de que el disparo STA/LTA también se activa con eventos pequeños.
+3. **Con estas dos clases la regla ya acierta 35 de 35** (sin contar los dos dudosos). Esto era de
+   esperar: el problema real de la regla son los **golpes repetidos** (P13, 2 de 2 falsas alertas),
+   que todavía no se han grabado.
+4. Hay **menos ejemplos de los planeados** (15 sacudidas y 20 golpes contra 30 y 30), suficiente para
+   esta primera revisión.
+5. Los rasgos de MyShake (IQR, CAV) y los propuestos (número de picos, factor de cresta) separan bien
+   estas dos clases. Los cruces por cero no sirven solos con estos datos.
+
+**Siguiente:** grabar `golpes_repetidos` (la clase crítica), luego `caminar`, `puerta`, `objeto_cae` y
+`sensor_movido`, y completar sacudidas hasta unas 30.
+
+## P15. Integración de la LCD y cambio de pines (26 nov) — [`crowdia_integrado.py`](../raspberry/crowdia_integrado.py) v5
+
+**Objetivo:** mostrar en una LCD 16×2 lo que va detectando el programa, sin depender de un PC.
+
+**Problema de partida:** la LCD se cableó en GPIO17, 18, 27, 22, 23 y 24, y tres de esos pines ya
+estaban ocupados (GPIO17 por el buzzer y GPIO23/24 por el I2C de la MPU6050). Además, varios pines de
+la placa resultaron dañados (2, 6, 14, 22, 30, 32, 34 y 38), entre ellos casi todos los de 5 V y GND.
+
+**Cambios:**
+
+| Qué | Antes | Ahora |
+|---|---|---|
+| MPU6050 (I2C bus 3) | GPIO23/24, pines 16/18 | **GPIO5/6, pines 29/31** (nuevo `dtoverlay`) |
+| Buzzer | GPIO17, pin 11 | **GPIO26, pin 37** |
+| 5 V y GND | Pines 2, 6 y 14 | Rieles de la protoboard desde los **pines 4 y 39** |
+| LCD | Solo en `pruebaLCD.py` | Integrada al programa principal |
+
+**Problemas durante la prueba:**
+
+| Error | Causa | Solución |
+|---|---|---|
+| `AVISO: LCD desactivada (No module named 'luma')` | Faltaba la librería | `pip3 install luma.lcd --break-system-packages` |
+| `cannot import name 'bitbang_6800' from 'luma.core.interface.serial'` | Importación equivocada (venía de `pruebaLCD.py`) | Importar desde `luma.core.interface.parallel` |
+
+**Resultado:** ✅ el programa v5 funciona con la LCD, el sensor y el buzzer en los pines nuevos.
+
 ## Pruebas pendientes
 
 - Repetir la prueba controlada con **dos o más celulares** propios en el cuarto.
 - Línea base larga (≥ 30 min) para caracterizar el fondo de la vecindad.
 - Medir el consumo de corriente de la Pi y del ESP32 (para dimensionar las baterías).
-- Grabar la señal cruda de cada evento sísmico (fase A del Agente IA 1).
+- Fase A del Agente IA 1: grabar `golpes_repetidos`, `caminar`, `puerta`, `objeto_cae` y `sensor_movido`.

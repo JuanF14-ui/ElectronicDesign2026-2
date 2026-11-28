@@ -7,26 +7,34 @@ Paso a paso para que cualquier integrante del equipo pueda montar y correr CROWD
 1. **Alimentación:** cargador de pared de 5 V (≥ 2 A) en el puerto **`PWR IN`**. Con el USB del PC no
    arranca bien.
 2. **Entrar a la Pi:** en connect.raspberrypi.com → el dispositivo → *Connect via* → **Remote shell**.
-3. **Crear el bus I2C 3** en los pines 16 y 18 (los pines 3 y 5 están desoldados):
+3. **Crear el bus I2C 3** en los pines 29 y 31 (el pin 3 está desoldado). Abrir
+   `sudo nano /boot/firmware/config.txt`, borrar cualquier línea anterior con `i2c-gpio` y dejar
+   solo esta al final:
    ```
-   echo 'dtoverlay=i2c-gpio,bus=3,i2c_gpio_sda=23,i2c_gpio_scl=24' | sudo tee -a /boot/firmware/config.txt
-   sudo reboot
+   dtoverlay=i2c-gpio,bus=3,i2c_gpio_sda=5,i2c_gpio_scl=6
    ```
+   Guardar y reiniciar con `sudo reboot`.
 4. **Instalar herramientas:**
    ```
    sudo apt update
-   sudo apt install -y i2c-tools python3-smbus
+   sudo apt install -y i2c-tools python3-smbus python3-gpiozero
+   pip3 install luma.lcd --break-system-packages
    ```
-   `gpiozero` (para el buzzer) viene en Raspberry Pi OS; si al correr el programa aparece
-   `AVISO: buzzer desactivado`, instalarlo con `sudo apt install -y python3-gpiozero`.
-5. **Conectar la MPU6050** según [02_hardware_y_conexiones.md](02_hardware_y_conexiones.md) y
-   comprobar que aparece en la dirección 68:
+   - `i2c-tools` y `python3-smbus`: hablar con la MPU6050.
+   - `python3-gpiozero`: manejar el buzzer.
+   - `luma.lcd`: manejar la LCD. Con `pip` en Raspberry Pi OS hace falta `--break-system-packages`.
+5. **Conectar los periféricos** según el diagrama de
+   [02_hardware_y_conexiones.md](02_hardware_y_conexiones.md#22-conexiones-a-la-raspberry-pi-actualizado-el-26-de-noviembre).
+6. **Descargar los programas** del repositorio a la Pi:
    ```
-   i2cdetect -y 3
+   mkdir -p ~/crowdia/pruebas && cd ~/crowdia
+   R=https://raw.githubusercontent.com/JuanF14-ui/ElectronicDesign2026-2/main/raspberry
+   wget -N $R/crowdia_integrado.py $R/ver_macs.py $R/etiquetar.py
+   cd pruebas && wget -N $R/pruebas/mpu_test.py $R/pruebas/prueba_buzzer.py $R/pruebas/pruebaLCD.py
    ```
-6. **Copiar el programa** a la Pi en `~/crowdia/crowdia_integrado.py`. Formas que funcionaron:
-   - Pegarlo en `nano ~/crowdia/crowdia_integrado.py` desde el Remote shell.
-   - Descargarlo del repositorio con `wget` (archivo *raw* de GitHub).
+   `wget -N` descarga el archivo solo si en GitHub hay una versión más nueva.
+7. **Probar cada periférico por separado** con la tabla de
+   [02_hardware_y_conexiones.md, sección 2.3](02_hardware_y_conexiones.md#23-cómo-probar-cada-periférico).
 
 ## 5.2 Programar el ESP32 (cada vez que cambie la IP de la Pi)
 
@@ -55,6 +63,12 @@ Paso a paso para que cualquier integrante del equipo pueda montar y correr CROWD
    ```
 5. No tocar la mesa durante la calibración (12 s). Luego aparecen la línea de estado del sismómetro y,
    cada 60 s, la tabla `[SCAN n]`.
+   En la LCD:
+
+   | Línea | Muestra | Ejemplo |
+   |---|---|---|
+   | 1 | Estado del sismómetro | `Reposo 3 mg` · `Evento 4s 120mg` · `ALERTA SISMO VI` |
+   | 2 | Conteo del último minuto | `Cel:2 Eq:3 S5` (celulares estimados, equipos en total, número de scan) · `Sin ESP32  S5` |
 6. Detener con `Ctrl + C`.
 
 **Antes de una prueba nueva**, mover los datos viejos para empezar con archivos limpios:
@@ -87,11 +101,15 @@ no es un sismo.
 | Síntoma | Causa | Solución |
 |---|---|---|
 | La Pi no aparece en el hotspot | Alimentación | Cargador de pared en `PWR IN` |
-| `i2cdetect -y 3` vacío | Cableado o falta el overlay | Revisar pines 16/18 y `config.txt` |
+| `i2cdetect -y 3` vacío | Cableado o falta el overlay | Revisar pines 29/31 y `config.txt` |
 | `IndentationError` en Python | Espacios mal copiados | `cat -A archivo.py` para ver Tabs (`^I`); usar 4 espacios |
 | `No DFU capable USB device` al subir al ESP32 | Placa equivocada | **ESP32 Dev Module** |
 | El ESP32 se queda en `....` | Clave o hotspot en 5 GHz | Revisar la clave; hotspot en 2,4 GHz |
-| `[SCAN]` dice "no llegó ningún paquete" | IP de la Pi cambió | `hostname -I` y reprogramar el ESP32 |
+| `[SCAN]` dice "no llegó ningún paquete" o la LCD dice `Sin ESP32` | IP de la Pi cambió, o el ESP32 perdió el hotspot | `hostname -I` y comparar con `secretos.h`; revisar el monitor serie del ESP32 |
+| `AVISO: LCD desactivada (No module named 'luma')` | Falta la librería | `pip3 install luma.lcd --break-system-packages` |
+| La LCD enciende pero no muestra letras | Contraste | Girar el potenciómetro de V0 |
+| `Remote I/O error` al arrancar | La MPU6050 no responde | `i2cdetect -y 3`; revisar pines 29/31 y la línea `dtoverlay` |
+| `hostname -I` muestra dos IP `10.x` | Una es la del modo USB | Usar la que está en la misma red que el ESP32 (`ip -4 addr`, interfaz `wlan0`) |
 | `Address already in use` | Otro programa usa el puerto 5005 | Cerrar `ver_macs.py` u otro integrado |
 | La alerta no se apaga | El sensor se movió | Fijar el sensor (la v3 ya se recupera sola en 1–2 s) |
 | `ssh` no resuelve `RaspberryGR7.local` | Windows no resuelve nombres `.local` | Usar la IP |

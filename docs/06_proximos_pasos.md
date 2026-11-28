@@ -49,7 +49,21 @@ Lo que convierte a cada uno en un **agente** es el ciclo percibir → decidir �
 
 ### Fase A: cómo recolectar los datos
 
-El grabador ya está en `crowdia_integrado.py` (v4). Protocolo propuesto (cantidades estimadas):
+**Avance (22 nov):** 15 sacudidas y 20 golpes grabados ([P14](04_pruebas_y_resultados.md)). Faltan
+`golpes_repetidos` (la clase más importante) y el resto.
+
+| Clase | Meta | Grabados |
+|---|---|---|
+| `sacudida` | 30 | 15 (+2 por confirmar) |
+| `golpe` | 30 | 20 |
+| `golpes_repetidos` | 30 | 0 |
+| `caminar` | los que salgan | 0 |
+| `puerta` | 15 | 0 |
+| `objeto_cae` | 15 | 0 |
+| `sensor_movido` | 15 | 0 |
+
+
+El grabador está en `crowdia_integrado.py` (desde la v4). Protocolo propuesto (cantidades estimadas):
 
 | Clase | Cómo producirla | Eventos |
 |---|---|---|
@@ -95,15 +109,14 @@ ID de Telegram autorizado, dejar `restrict_to_workspace` activado, no exponer la
 
 | Pendiente | Prioridad |
 |---|---|
-| Agente IA 1, fase A: **recolectar** los eventos con el protocolo de la sección 6.2 | Alta |
+| Agente IA 1, fase A: corregir los 2 eventos dudosos de las 23:39 y grabar **golpes repetidos** y las demás clases (ver P14) | Alta |
 | Agente IA 2: huella de Information Elements en el ESP32 | Media |
 | Cambiar el enlace UDP/hotspot por **ESP-NOW** (sin router) y construir el gateway (ESP32 + microSD) | Media |
 | Envío por broadcast o IP fija, para no reprogramar el ESP32 cada vez que cambia la IP | Media |
 | Nodos satélite (3+ ESP32) para trilateración | Baja |
 | Etapa de potencia con baterías y medición de consumo | Media |
 | BOM con referencias, precios y proveedores | Media |
-| Confirmar el pin del buzzer y si es activo o pasivo | Baja |
-| Recablear D7 de la LCD al pin 37 | Baja |
+| Registrar el transistor y la resistencia del buzzer, y si es activo o pasivo | Baja |
 | Identificar el equipo con MAC fija F8:43:EF:AA:25:E0 | Baja |
 | Subir al repo los scripts que quedaron en `~/.picoclaw/workspace/` | Baja |
 | **Cambiar las claves Wi-Fi** que quedaron en el historial público del repositorio | Alta |
